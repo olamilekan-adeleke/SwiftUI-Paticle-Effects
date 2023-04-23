@@ -88,6 +88,8 @@ private struct ParticleModifier: ViewModifier {
     }
 
     func setParticlesForVshape() {
+        self.resetAllParticles()
+
         let totalCount = CGFloat(particles.count)
         for index in self.particles.indices {
             // Get Random X and Y Value based on Index
@@ -110,44 +112,101 @@ private struct ParticleModifier: ViewModifier {
                 randomY: valueY + extraRandomnessY,
                 randomScale: randomScale
             )
-
-//            withAnimation(.interactiveSpring(
-//                response: 0.6,
-//                dampingFraction: 0.7,
-//                blendDuration: 0.7
-//            )) {
-//                self.particles[index].randomX = valueX + extraRandomnessX
-//                // the 35 is to make the baseline go up a bit so it dose not
-//                // start from the center but at the top
-//                self.particles[index].randomY = -(valueY + extraRandomnessY + 35)
-//            }
-
-//            withAnimation(.easeInOut(duration: 0.3)) {
-//                self.particles[index].scale = randomScale
-//            }
-
-            // remove particle base on index
-//            withAnimation(.interactiveSpring(
-//                response: 0.6,
-//                dampingFraction: 0.7,
-//                blendDuration: 0.7
-//            ).delay(0.25 + (Double(index) * 0.005))) {
-//                self.particles[index].scale = 0.001
-//            }
         }
     }
 
-    func setParticlesForRandomTop() {}
+    func setParticlesForRandomTop() {
+        self.resetAllParticles()
 
-    func setParticlesForRandomButtom() {}
+        let totalCount = CGFloat(particles.count)
+        for index in self.particles.indices {
+            // Get Random X and Y Value based on Index
+            let progress = CGFloat(index) / totalCount
 
-    func setParticlesForRandomAllRoound() {}
+            let maxX: CGFloat = 100
+            let maxY: CGFloat = 60
+
+            let valueX: CGFloat = ((progress > 0.5 ? progress - 0.5 : progress) * maxX)
+            let valueY: CGFloat = ((progress > 0.5 ? progress - 0.5 : progress) * maxY)
+
+            let extraRandomnessX: CGFloat = .random(in: -100 ... 50)
+            let extraRandomnessY: CGFloat = .random(in: 0 ... 35)
+
+            let randomScale: CGFloat = .random(in: 0.35 ... 1)
+
+            self.performAnimation(
+                index: index,
+                randomX: valueX + extraRandomnessX,
+                randomY: valueY + extraRandomnessY,
+                randomScale: randomScale
+            )
+        }
+    }
+
+    func setParticlesForRandomButtom() {
+        self.resetAllParticles()
+
+        let totalCount = CGFloat(particles.count)
+        for index in self.particles.indices {
+            // Get Random X and Y Value based on Index
+            let progress = CGFloat(index) / totalCount
+
+            let maxX: CGFloat = 100
+            let maxY: CGFloat = -60
+
+            let valueX: CGFloat = ((progress > 0.5 ? progress - 0.5 : progress) * maxX)
+            let valueY: CGFloat = ((progress > 0.5 ? progress - 0.5 : progress) * maxY)
+
+            let extraRandomnessX: CGFloat = .random(in: -100 ... 50)
+            let extraRandomnessY: CGFloat = .random(in: 0 ... 35)
+
+            let randomScale: CGFloat = .random(in: 0.35 ... 1)
+
+            self.performAnimation(
+                index: index,
+                randomX: valueX + extraRandomnessX,
+                randomY: valueY + extraRandomnessY,
+                randomScale: randomScale,
+                isNagative: true
+            )
+        }
+    }
+
+    func setParticlesForRandomAllRoound() {
+        self.resetAllParticles()
+
+        let totalCount = CGFloat(particles.count)
+        for index in self.particles.indices {
+            // Get Random X and Y Value based on Index
+//            let progress = CGFloat(index) / totalCount
+
+//            let maxX: CGFloat = 100
+//            let maxY: CGFloat = -60
+//
+//            let valueX: CGFloat = ((progress > 0.5 ? progress - 0.5 : progress) * maxX)
+//            let valueY: CGFloat = ((progress > 0.5 ? progress - 0.5 : progress) * maxY)
+
+            let extraRandomnessX: CGFloat = .random(in: -100 ... 100)
+            let extraRandomnessY: CGFloat = .random(in: -60 ... 60)
+
+            let randomScale: CGFloat = .random(in: 0.35 ... 1)
+
+            self.performAnimation(
+                index: index,
+                randomX: extraRandomnessX,
+                randomY: extraRandomnessY,
+                randomScale: randomScale,
+                isNagative: true
+            )
+        }
+    }
 
     func performAnimation(
         index: Int,
         randomX: CGFloat,
         randomY: CGFloat,
-        randomScale: CGFloat
+        randomScale: CGFloat,
+        isNagative: Bool = false
     ) {
         withAnimation(.interactiveSpring(
             response: 0.6,
@@ -157,7 +216,7 @@ private struct ParticleModifier: ViewModifier {
             self.particles[index].randomX = randomX
             // the 35 is to make the baseline go up a bit so it dose not
             // start from the center but at the top
-            self.particles[index].randomY = -(randomY + 35)
+            self.particles[index].randomY = isNagative ? (randomY + 35) : -(randomY + 35)
         }
 
         withAnimation(.easeInOut(duration: 0.3)) {
